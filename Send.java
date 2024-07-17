@@ -110,6 +110,7 @@ public class Send {
                 else {
                     System.out.println(StdOut.RED + "failed");
                     System.out.println("バインドに失敗しました。" + StdOut.END);
+                    System.exit(1);
                 }
             ds.connect(socketAdd);
             boolean isConnected = ds.isConnected();
@@ -120,6 +121,7 @@ public class Send {
                 System.out.println(StdOut.RED + "failed");
                 System.out.println("ソケット接続に失敗しました。" + StdOut.END);
                 ds.close();
+                System.exit(1);
             }
             
             System.out.print("Send: ");
@@ -135,6 +137,7 @@ public class Send {
                 else {
                 System.out.println(StdOut.RED + "failed" + StdOut.END);
                 System.out.println("ソケットを閉じる処理で問題が発生しました。" + StdOut.END);
+                System.exit(1);
             }
             scn.close();
             if(this.option.equals("-s") || this.option.equals("-sd")){ 
