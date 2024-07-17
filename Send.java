@@ -51,7 +51,7 @@ public class Send {
         System.out.println("また、-sdオプションは、保存したデータファイルに書き込み時刻を書き込みます。");
         System.out.println("保存するには、以下の形式で操作を完了できます。");
         System.out.println("URL ポート番号 -s/-sd ディレクトリパス/ファイルパス");
-        System.out.println("例: C:\\Users\\adminminzemi\\heDesktop\\buffa-deta-.txt");
+        System.out.println("パスの例: C:\\Users\\adminminzemi\\heDesktop\\buffa-deta-.txt");
         try {
             Scanner scn = new Scanner(System.in);
             String input = scn.nextLine();
