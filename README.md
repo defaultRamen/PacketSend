@@ -5,4 +5,4 @@
 
 初心者が作ったのでバグ等あるかもしれませんがご了承ください
 
-ver0.0.1 update オプションを入力しないとArrayIndexOutOfBoundsExceptionがスローされる問題を解決しました。
+ver0.0.1 bug_fix オプションを入力しないとArrayIndexOutOfBoundsExceptionがスローされる問題を解決しました。
