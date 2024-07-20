@@ -1,20 +1,11 @@
-package iro2.attack;
+// 動作環境 Visual Studio Code ターミナル / Windows 11 ターミナル
+// ver0.0.1 update オプションを入力しないとArrayIndexOutOfBoundsExceptionがスローされる問題を解決しました。
 
 import java.io.*;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.net.*;
 import java.util.*;
-
-final class StdOut{
-    public final static String RED = "\u001b[00;31m";
-    public final static String GREEN  = "\u001b[00;32m";
-    public final static String YELLOW = "\u001b[00;33m";
-    public final static String PURPLE = "\u001b[00;34m";
-    public final static String PINK   = "\u001b[00;35m";
-    public final static String CYAN   = "\u001b[00;36m";   
-    public final static String END    = "\u001b[00m";
-}
 
 public class Send {
     private String hostName;
@@ -23,7 +14,6 @@ public class Send {
     private String option;
     private String optionPath;
 
-    // getterは不必要？ とりあえず残す
     public String getOptionPath(){
         return this.optionPath;
     }
@@ -46,25 +36,21 @@ public class Send {
 
     public void send(){
         System.out.println(StdOut.GREEN + "URL" + StdOut.END + "(プロトコルタイプ://ドメイン の形式)と" + StdOut.CYAN + "ポート番号" + StdOut.END + "を半角区切りで入力してください。");
-        System.out.println("Option:");
-        System.out.println("-sオプションは、送信したデータを任意のパスに任意の名前で保存できます。");
-        System.out.println("また、-sdオプションは、保存したデータファイルに書き込み時刻を書き込みます。");
-        System.out.println("保存するには、以下の形式で操作を完了できます。");
-        System.out.println("URL ポート番号 -s/-sd ディレクトリパス/ファイルパス");
-        System.out.println("パスの例: C:\\Users\\adminminzemi\\heDesktop\\buffa-deta-.txt");
         try {
             Scanner scn = new Scanner(System.in);
             String input = scn.nextLine();
             String[] cmd = input.split(" ");
             this.hostName = cmd[0];
             this.port = Integer.parseInt(cmd[1]);
-            this.option = cmd[2];
-            this.optionPath = cmd[3];
-            Path savePath = Paths.get(this.optionPath);
-            if(Files.isDirectory(savePath)){
-                System.out.println("指定されたパスはディレクトリです。 -sオプションでは、ディレクトリパスの後にバッファデータ保存用のファイルパス(ファイル名.拡張子) をつける必要があります。");
-                System.out.println("例: C:\\Users\\User\\Desktop\\buf_data.txt");
-                System.exit(1);
+            if (!(this.option == null && this.optionPath == null)){
+                this.option = cmd[2];
+                this.optionPath = cmd[3];
+                Path savePath = Paths.get(this.optionPath);
+                if(Files.isDirectory(savePath)){
+                    System.out.println("指定されたパスはディレクトリです。 -sオプションでは、ディレクトリパスの後にバッファデータ保存用のファイルパス(ファイル名.拡張子) をつける必要があります。");
+                    System.out.println("例: C:\\Users\\User\\Desktop\\buf_data.txt");
+                    System.exit(1);
+                }
             }
             Random r = new Random();
             this.buffer = new byte[60000];
@@ -110,7 +96,6 @@ public class Send {
                 else {
                     System.out.println(StdOut.RED + "failed");
                     System.out.println("バインドに失敗しました。" + StdOut.END);
-                    System.exit(1);
                 }
             ds.connect(socketAdd);
             boolean isConnected = ds.isConnected();
@@ -121,7 +106,6 @@ public class Send {
                 System.out.println(StdOut.RED + "failed");
                 System.out.println("ソケット接続に失敗しました。" + StdOut.END);
                 ds.close();
-                System.exit(1);
             }
             
             System.out.print("Send: ");
@@ -137,29 +121,30 @@ public class Send {
                 else {
                 System.out.println(StdOut.RED + "failed" + StdOut.END);
                 System.out.println("ソケットを閉じる処理で問題が発生しました。" + StdOut.END);
-                System.exit(1);
             }
             scn.close();
-            if(this.option.equals("-s") || this.option.equals("-sd")){ 
-                File f = new File(this.optionPath);
-                FileOutputStream fos = new FileOutputStream(f);
-                OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-                String byteToString;
-                if (this.option.equals("-sd")){
-                    LocalDateTime ldt = LocalDateTime.now();
-                    int year = ldt.getYear();
-                    int month = ldt.getMonthValue();
-                    int date = ldt.getDayOfMonth();
-                    int hour = ldt.getHour();
-                    int minute = ldt.getMinute();
-                    osw.write("書き込み時刻: " + year + "年" + month + "月" + date + "日" + hour + "時" + minute + "分\n\n");
+            if(!(this.option == null && this.optionPath == null)){
+                if(this.option.equals("-s") || this.option.equals("-sd")){ 
+                    File f = new File(this.optionPath);
+                    FileOutputStream fos = new FileOutputStream(f);
+                    OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+                    String byteToString;
+                    if (this.option.equals("-sd")){
+                        LocalDateTime ldt = LocalDateTime.now();
+                        int year = ldt.getYear();
+                        int month = ldt.getMonthValue();
+                        int date = ldt.getDayOfMonth();
+                        int hour = ldt.getHour();
+                        int minute = ldt.getMinute();
+                        osw.write("書き込み時刻: " + year + "年" + month + "月" + date + "日" + hour + "時" + minute + "分\n\n");
+                    }
+                    for(byte byteBuffer : this.buffer){
+                        byteToString = byteBuffer + "";
+                        osw.write(byteToString + " ");
+                    }
+                    osw.close();
+                    System.out.println("\n送信したデータをテキストファイルに保存しました: " + f.toString());
                 }
-                for(byte byteBuffer : this.buffer){
-                    byteToString = byteBuffer + "";
-                    osw.write(byteToString + " ");
-                }
-                osw.close();
-                System.out.println("\n送信したデータをテキストファイルに保存しました: " + f.toString());
             }
         } catch (IOException e){
             System.err.println(e.getMessage());
